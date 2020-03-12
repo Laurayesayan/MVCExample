@@ -18,16 +18,16 @@ import Kingfisher
 
 class ViewController: UIViewController {
     @IBOutlet weak var categoriesTableView: UITableView!
-    let categoriesViewModel = CategoriesViewModel()
+    let categoriesLoader = CategoriesLoader()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         bindCategoriesToTableView()
-        categoriesViewModel.loadCategories(url: "http://blackstarshop.ru/index.php?route=api/v1/categories")
+        categoriesLoader.loadCategories(url: "http://blackstarshop.ru/index.php?route=api/v1/categories")
     }
     
     func bindCategoriesToTableView() {
-        categoriesViewModel.categoriesList.bind(to: categoriesTableView) { (dataSource, indexPath, tableView) -> UITableViewCell in
+        categoriesLoader.categoriesList.bind(to: categoriesTableView) { (dataSource, indexPath, tableView) -> UITableViewCell in
             let cell = tableView.dequeueReusableCell(withIdentifier: "CategoriesCell") as! CategoriesTableViewCell
             
             cell.titleLabel.text = dataSource[indexPath.row].name
@@ -54,7 +54,7 @@ class CategoriesTableViewCell: UITableViewCell {
     
 }
 
-class CategoriesViewModel {
+class CategoriesLoader {
     public var categoriesList = MutableObservableArray<Categories>([])
     
     func loadCategories(url: String) {
@@ -71,19 +71,4 @@ class CategoriesViewModel {
         }
     }
     
-}
-
-struct Categories {
-    let name: String
-    let iconImage: String
-    
-    init?(data: NSDictionary) {
-        guard let name = data["name"] as? String,
-            let iconImage = data["iconImage"] as? String else {
-                return nil
-        }
-        
-        self.name = name
-        self.iconImage = iconImage
-    }
 }
